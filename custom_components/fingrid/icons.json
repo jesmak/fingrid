@@ -1,0 +1,107 @@
+{
+  "entity": {
+    "sensor": {
+      "production": {
+        "default": "mdi:transmission-tower"
+      },
+      "consumption": {
+        "default": "mdi:home-lightning-bolt"
+      },
+      "net_export": {
+        "default": "mdi:transmission-tower-export"
+      },
+      "nuclear": {
+        "default": "mdi:atom"
+      },
+      "hydro": {
+        "default": "mdi:hydro-power"
+      },
+      "wind": {
+        "default": "mdi:wind-turbine"
+      },
+      "district_heating_cogeneration": {
+        "default": "mdi:radiator"
+      },
+      "industrial_cogeneration": {
+        "default": "mdi:factory"
+      },
+      "reserve_and_small_scale": {
+        "default": "mdi:solar-power-variant"
+      },
+      "export_northern_sweden": {
+        "default": "mdi:transmission-tower-export"
+      },
+      "export_central_sweden": {
+        "default": "mdi:transmission-tower-export"
+      },
+      "export_estonia": {
+        "default": "mdi:transmission-tower-export"
+      },
+      "export_norway": {
+        "default": "mdi:transmission-tower-export"
+      },
+      "export_aland_sweden": {
+        "default": "mdi:transmission-tower-export"
+      },
+      "battery_charging": {
+        "default": "mdi:battery-charging"
+      },
+      "battery_discharging": {
+        "default": "mdi:battery-arrow-down"
+      },
+      "emission_factor_consumption": {
+        "default": "mdi:molecule-co2"
+      },
+      "emission_factor_production": {
+        "default": "mdi:molecule-co2"
+      },
+      "non_fossil_share": {
+        "default": "mdi:leaf"
+      },
+      "power_system_state": {
+        "default": "mdi:traffic-light"
+      },
+      "shortage_status": {
+        "default": "mdi:flash-alert"
+      },
+      "wind_forecast": {
+        "default": "mdi:wind-turbine"
+      },
+      "solar_forecast": {
+        "default": "mdi:solar-power"
+      },
+      "consumption_forecast": {
+        "default": "mdi:home-lightning-bolt"
+      },
+      "peak_load_power": {
+        "default": "mdi:power-plug-battery"
+      },
+      "surplus": {
+        "default": "mdi:scale-balance"
+      },
+      "surplus_cumulative": {
+        "default": "mdi:scale-balance"
+      },
+      "electric_boilers": {
+        "default": "mdi:water-boiler"
+      },
+      "north_south_transmission": {
+        "default": "mdi:arrow-down-bold"
+      },
+      "frequency": {
+        "default": "mdi:sine-wave"
+      },
+      "time_deviation": {
+        "default": "mdi:clock-alert-outline"
+      },
+      "kinetic_energy": {
+        "default": "mdi:rotate-right"
+      }
+    }
+  },
+  "services": {
+    "get_forecast": {
+      "service": "mdi:chart-bell-curve-cumulative"
+    }
+  }
+}

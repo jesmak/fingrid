@@ -1,0 +1,5 @@
+get_forecast:
+  target:
+    entity:
+      integration: fingrid
+      domain: sensor

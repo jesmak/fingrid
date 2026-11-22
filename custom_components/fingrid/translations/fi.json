@@ -1,0 +1,102 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Fingrid",
+        "description": "Fingridin avoin data vaatii API-avaimen. Se on ilmainen, ja sen saa rekisteröitymällä [Fingridin avoimen datan palveluun]({portal_url}).",
+        "data": {
+          "api_key": "API-avain"
+        },
+        "data_description": {
+          "api_key": "Open Data starter -tuotteen API-avain."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Uusi API-avain",
+        "description": "Fingrid ei hyväksynyt API-avainta. Varmista, että sinulla on toimiva avain [Fingridin avoimen datan palveluun]({portal_url}).",
+        "data": {
+          "api_key": "API-avain"
+        },
+        "data_description": {
+          "api_key": "Open Data starter -tuotteen API-avain."
+        }
+      }
+    },
+    "error": {
+      "invalid_api_key": "Fingrid ei hyväksynyt API-avainta.",
+      "cannot_connect": "Fingridiin ei saatu yhteyttä. Yritä hetken päästä uudelleen."
+    },
+    "abort": {
+      "single_instance_allowed": "Fingrid on jo lisätty.",
+      "reauth_successful": "API-avain vaihdettiin."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "production": { "name": "Tuotanto" },
+      "consumption": { "name": "Kulutus" },
+      "net_export": { "name": "Nettovienti" },
+      "nuclear": { "name": "Ydinvoima" },
+      "hydro": { "name": "Vesivoima" },
+      "wind": { "name": "Tuulivoima" },
+      "district_heating_cogeneration": { "name": "Yhteistuotanto, kaukolämpö" },
+      "industrial_cogeneration": { "name": "Yhteistuotanto, teollisuus" },
+      "reserve_and_small_scale": { "name": "Varavoimalat ja pientuotanto" },
+      "export_northern_sweden": { "name": "Vienti Pohjois-Ruotsiin" },
+      "export_central_sweden": { "name": "Vienti Keski-Ruotsiin" },
+      "export_estonia": { "name": "Vienti Viroon" },
+      "export_norway": { "name": "Vienti Norjaan" },
+      "battery_charging": { "name": "Akkuvarastojen lataus" },
+      "battery_discharging": { "name": "Akkuvarastojen purku" },
+      "emission_factor_consumption": { "name": "Kulutuksen päästökerroin" },
+      "emission_factor_production": { "name": "Tuotannon päästökerroin" },
+      "non_fossil_share": { "name": "Fossiilittoman tuotannon osuus" },
+      "power_system_state": {
+        "name": "Sähköjärjestelmän käyttötilanne",
+        "state": {
+          "normal": "Normaali",
+          "weakened": "Heikentynyt",
+          "endangered": "Vaarassa",
+          "blackout": "Vakava häiriö",
+          "restoring": "Palautumassa"
+        }
+      },
+      "shortage_status": {
+        "name": "Sähköpula",
+        "state": {
+          "normal": "Normaali",
+          "possible": "Mahdollinen",
+          "high_risk": "Riski suuri",
+          "shortage": "Sähköpula"
+        }
+      },
+      "wind_forecast": { "name": "Tuulivoimaennuste" },
+      "solar_forecast": { "name": "Aurinkovoimaennuste" },
+      "consumption_forecast": { "name": "Kulutusennuste" },
+      "export_aland_sweden": { "name": "Vienti Ahvenanmaalta Ruotsiin" },
+      "peak_load_power": { "name": "Tehoreservi" },
+      "surplus": { "name": "Tuotannon ylijäämä" },
+      "surplus_cumulative": { "name": "Tuotannon ylijäämä, kumulatiivinen" },
+      "electric_boilers": { "name": "Sähkökattilat" },
+      "north_south_transmission": { "name": "Siirto pohjoisesta etelään" },
+      "frequency": { "name": "Taajuus" },
+      "time_deviation": { "name": "Aikapoikkeama" },
+      "kinetic_energy": { "name": "Pohjoismaisen sähköjärjestelmän liike-energia" },
+      "temperature_helsinki": { "name": "Lämpötila Helsingissä" },
+      "temperature_jyvaskyla": { "name": "Lämpötila Jyväskylässä" },
+      "temperature_oulu": { "name": "Lämpötila Oulussa" },
+      "temperature_rovaniemi": { "name": "Lämpötila Rovaniemellä" }
+    }
+  },
+  "services": {
+    "get_forecast": {
+      "name": "Hae ennuste",
+      "description": "Ennusteen vartit tästä eteenpäin, enintään 72 tuntia."
+    }
+  },
+  "exceptions": {
+    "not_a_forecast": {
+      "message": "{entity_id} ei ole ennuste."
+    }
+  }
+}
