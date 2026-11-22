@@ -139,20 +139,60 @@ one the integration already holds, so the action asks nothing of Fingrid.
 ```yaml
 action: fingrid.get_forecast
 target:
-    entity_id: sensor.fingrid_wind_power_forecast
+  entity_id: sensor.fingrid_wind_power_forecast
 response_variable: wind
 ```
 
 ```yaml
 sensor.fingrid_wind_power_forecast:
-    forecast:
-        - start: "2026-01-15T18:00:00+00:00"
-          end: "2026-01-15T18:15:00+00:00"
-          value: 5120.4
-        - start: "2026-01-15T18:15:00+00:00"
-          end: "2026-01-15T18:30:00+00:00"
-          value: 5134.9
+  forecast:
+    - start: "2026-01-15T18:00:00+00:00"
+      end: "2026-01-15T18:15:00+00:00"
+      value: 5120.4
+    - start: "2026-01-15T18:15:00+00:00"
+      end: "2026-01-15T18:30:00+00:00"
+      value: 5134.9
 ```
+
+## Fingrid card
+
+The integration comes with a dashboard card that puts the sensors together. It shows the grid state and the electricity
+shortage status as chips beside the title, the production, consumption and net export, a map of Finland with an arrow for each
+cross-border flow, the production split by type, a chart of the three-day forecasts and a line of the emission factor,
+the non-fossil share and the battery storage. Each part can be switched off, and the cross-border flows can also be
+shown as a list.
+
+The integration serves the card itself and adds it to the dashboards' resources when it starts, so the card is always
+the integration's own version. With the resources set in YAML (`resource_mode: yaml`), it can't add or update
+itself, and the log says which line to add, change or remove.
+
+### Card options
+
+The card has a visual editor. Add **Fingrid** from the card picker. It finds the integration's sensors on its own, so it
+needs no entity. The options can also be written by hand, and `height_mode`, `height` and `max_height` only by hand. In
+a sections view the layout tab sets the card's height. They are for where there is no layout tab, such as a masonry or
+panel view, or a stack or other card the card is inside, even in a sections view.
+
+| Name            | Type    | Description                                                                                                                                                                                                                                                                                                                | Default                                                                         |
+| --------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `type`          | string  | `custom:fingrid-card`                                                                                                                                                                                                                                                                                                      | required                                                                        |
+| `show_status`   | boolean | The power system state and the electricity shortage status beside the title                                                                                                                                                                                                                                                | `true`                                                                          |
+| `show_totals`   | boolean | The production, consumption and net export                                                                                                                                                                                                                                                                                 | `true`                                                                          |
+| `show_map`      | boolean | The map of the cross-border flows                                                                                                                                                                                                                                                                                          | `true`                                                                          |
+| `show_borders`  | boolean | The cross-border flows as a list                                                                                                                                                                                                                                                                                           | `false`                                                                         |
+| `show_aland`    | boolean | The flow from Åland to Sweden on the map and in the list                                                                                                                                                                                                                                                                   | `true`                                                                          |
+| `show_mix`      | boolean | The production by type, as a bar                                                                                                                                                                                                                                                                                           | `true`                                                                          |
+| `show_forecast` | boolean | The wind, solar and consumption forecasts for three days, as a chart                                                                                                                                                                                                                                                       | `true`                                                                          |
+| `show_details`  | boolean | The emission factor of consumption, the non-fossil share and the battery storage                                                                                                                                                                                                                                           | `true`                                                                          |
+| `height_mode`   | string  | How tall the card is. `auto` fits its content, `fixed` keeps it at `height`, `max` lets it grow up to `max_height`. The card is never held lower than its parts need. A height in grid rows, set in the layout tab of a sections view, is used instead                                                                     | `fixed` when `height` is set, `max` when only `max_height` is, otherwise `auto` |
+| `height`        | number  | The card's height in pixels, for `fixed`                                                                                                                                                                                                                                                                                   |                                                                                 |
+| `max_height`    | number  | The card's greatest height in pixels, for `max`                                                                                                                                                                                                                                                                            |                                                                                 |
+| `row_step`      | string  | How the card rounds its height on automatic rows in a sections view, with `height_mode` `auto` or `max`. `full` rounds it up to whole rows, so the cards under it stay on the rows. `half` rounds it up to half rows, which saves space but can leave the cards under it half a row off the rows of the sections beside it | `full`                                                                          |
+
+A part shows only what its sensors give. A border, a production type or a forecast whose sensor is disabled is left
+out. A total or a border whose sensor is unavailable shows a dash, and a production type without a reading is left out
+of the bar. In a sections view the card takes a whole section, as the map and
+the totals need its width.
 
 ## Examples
 
@@ -160,35 +200,35 @@ A notification when Fingrid warns of an electricity shortage:
 
 ```yaml
 triggers:
-    - trigger: state
-      entity_id: sensor.fingrid_electricity_shortage
-      to:
-          - possible
-          - high_risk
-          - shortage
-      not_from:
-          - unknown
-          - unavailable
+  - trigger: state
+    entity_id: sensor.fingrid_electricity_shortage
+    to:
+      - possible
+      - high_risk
+      - shortage
+    not_from:
+      - unknown
+      - unavailable
 actions:
-    - action: notify.notify
-      data:
-          title: Electricity shortage
-          message: "Fingrid's electricity shortage status is now {{ trigger.to_state.state }}."
+  - action: notify.notify
+    data:
+      title: Electricity shortage
+      message: "Fingrid's electricity shortage status is now {{ trigger.to_state.state }}."
 ```
 
 The highest wind power forecast for the next 24 hours, in a template:
 
 ```yaml
 actions:
-    - action: fingrid.get_forecast
-      target:
-          entity_id: sensor.fingrid_wind_power_forecast
-      response_variable: wind
-    - variables:
-          peak: >-
-              {{ wind['sensor.fingrid_wind_power_forecast'].forecast
-                 | selectattr('start', 'lt', (utcnow() + timedelta(hours=24)).isoformat())
-                 | map(attribute='value') | max }}
+  - action: fingrid.get_forecast
+    target:
+      entity_id: sensor.fingrid_wind_power_forecast
+    response_variable: wind
+  - variables:
+      peak: >-
+        {{ wind['sensor.fingrid_wind_power_forecast'].forecast
+           | selectattr('start', 'lt', (utcnow() + timedelta(hours=24)).isoformat())
+           | map(attribute='value') | max }}
 ```
 
 ## Data
@@ -214,6 +254,19 @@ python3.14 -m venv .venv
 .venv/bin/ruff check .
 ```
 
+The card is in `frontend/` and requires Node 22.13 or newer:
+
+```
+cd frontend
+npm install
+npm run check
+```
+
+`npm run check` typechecks, lints, checks formatting, runs the tests and builds
+`custom_components/fingrid/www/fingrid-card.js`, which is the file the integration serves and is committed to the
+repository. The card carries the integration's version from `manifest.json`. To have git refuse a commit whose built
+card doesn't match `frontend/`, run `git config core.hooksPath .githooks` once.
+
 | Path                           | What it contains                                                       |
 | ------------------------------ | ---------------------------------------------------------------------- |
 | `__init__.py`                  | Setup, the datasets of the enabled sensors and the get_forecast action |
@@ -223,7 +276,9 @@ python3.14 -m venv .venv
 | `datasets.py`                  | The sensors' datasets, and reading Fingrid's rows                      |
 | `coordinator.py`               | The real-time and forecast updates                                     |
 | `sensor.py`                    | The measurement and forecast sensors                                   |
+| `card.py`                      | Serving the card and keeping its dashboard resource                    |
 | `translations/<language>.json` | Home Assistant UI texts                                                |
+| `www/fingrid-card.js`          | The card, built from `frontend/`                                       |
 
 ## Support
 

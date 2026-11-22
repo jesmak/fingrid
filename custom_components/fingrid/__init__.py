@@ -1,7 +1,8 @@
 """Fingrid: Finland's electricity production, consumption, cross-border transmission and grid state from Fingrid's open data.
 
 One config entry holds the API key. Its sensors are on one service device, and only the datasets of enabled sensors
-are asked for, as enabling or disabling one reloads the entry.
+are asked for, as enabling or disabling one reloads the entry. The integration serves its card and keeps it in the
+dashboards' resources.
 """
 
 from __future__ import annotations
@@ -15,6 +16,7 @@ from homeassistant.helpers import service
 from homeassistant.helpers.typing import ConfigType
 
 from .api import Client
+from .card import async_add_card_resource, async_remove_card_resource, async_serve_card
 from .const import DOMAIN, SERVICE_GET_FORECAST
 from .coordinator import FingridConfigEntry, FingridRuntimeData, ForecastCoordinator, RealtimeCoordinator
 from .datasets import SENSORS, FingridSensorDescription
@@ -24,6 +26,7 @@ CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    await async_serve_card(hass)
     service.async_register_platform_entity_service(
         hass,
         DOMAIN,
@@ -37,6 +40,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: FingridConfigEntry) -> bool:
+    await async_add_card_resource(hass)
     client = Client(hass, entry.data[CONF_API_KEY])
     enabled = [description for description in SENSORS if _enabled(hass, entry, description)]
     realtime = RealtimeCoordinator(hass, entry, client, {d.dataset for d in enabled if not d.forecast})
@@ -60,3 +64,7 @@ def _enabled(hass: HomeAssistant, entry: FingridConfigEntry, description: Fingri
 
 async def async_unload_entry(hass: HomeAssistant, entry: FingridConfigEntry) -> bool:
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+
+
+async def async_remove_entry(hass: HomeAssistant, entry: FingridConfigEntry) -> None:
+    await async_remove_card_resource(hass)

@@ -1,0 +1,65 @@
+{
+    "common": {
+        "name": "Fingrid",
+        "description": "Finland's electricity production, consumption, cross-border flows and grid state, from the Fingrid integration",
+        "invalid_configuration": "Invalid configuration",
+        "invalid_height": "Invalid height. height and max_height must be positive numbers of pixels, and height_mode auto, fixed or max.",
+        "invalid_row_step": "Invalid rounding. row_step must be full or half.",
+        "not_found": "The Fingrid integration isn't set up"
+    },
+    "status": {
+        "power_system_state": "Power system state",
+        "shortage_status": "Electricity shortage"
+    },
+    "totals": {
+        "production": "Production",
+        "consumption": "Consumption",
+        "net_export": "Net export"
+    },
+    "map": {
+        "label": "Finland's cross-border electricity flows"
+    },
+    "borders": {
+        "norway": "Norway",
+        "northern_sweden": "Northern Sweden",
+        "central_sweden": "Central Sweden",
+        "estonia": "Estonia",
+        "aland_sweden": "Åland–Sweden",
+        "export": "export",
+        "import": "import"
+    },
+    "mix": {
+        "nuclear": "Nuclear",
+        "hydro": "Hydro",
+        "wind": "Wind",
+        "district_heating_cogeneration": "District heating",
+        "industrial_cogeneration": "Industry",
+        "reserve_and_small_scale": "Other"
+    },
+    "forecast": {
+        "wind_forecast": "Wind",
+        "solar_forecast": "Solar",
+        "consumption_forecast": "Consumption",
+        "unavailable": "The forecast isn't available"
+    },
+    "details": {
+        "emission": "Emission factor {value} gCO₂/kWh",
+        "non_fossil": "Non-fossil {value} %",
+        "batteries": "Batteries charging {charging} MW, discharging {discharging} MW"
+    },
+    "editor": {
+        "show_status": "Grid state and electricity shortage",
+        "show_totals": "Production, consumption and net export",
+        "show_map": "Map of the cross-border flows",
+        "show_borders": "Cross-border flows as a list",
+        "show_aland": "Åland–Sweden",
+        "show_aland_helper": "Åland belongs to the Swedish bidding zone SE3, so this flow isn't across Finland's border. Shown while its sensor is enabled.",
+        "show_mix": "Production by type",
+        "show_forecast": "Forecasts for three days",
+        "show_details": "Emission factor, non-fossil share and batteries",
+        "row_step": "Rounding in a sections view",
+        "row_step_helper": "With automatic row height, the card's height is rounded up to whole rows, or to half rows to save space.",
+        "row_step_full": "Whole rows",
+        "row_step_half": "Half rows"
+    }
+}

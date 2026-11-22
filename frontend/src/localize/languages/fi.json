@@ -1,0 +1,65 @@
+{
+    "common": {
+        "name": "Fingrid",
+        "description": "Suomen sähkön tuotanto, kulutus, rajasiirrot ja sähköjärjestelmän tila Fingrid-integraatiosta",
+        "invalid_configuration": "Virheelliset asetukset",
+        "invalid_height": "Virheellinen korkeus. Korkeuksien (height ja max_height) on oltava positiivisia lukuja pikseleinä, ja korkeustilan (height_mode) auto, fixed tai max.",
+        "invalid_row_step": "Virheellinen pyöristys. Pyöristyksen (row_step) on oltava full tai half.",
+        "not_found": "Fingrid-integraatiota ei ole lisätty"
+    },
+    "status": {
+        "power_system_state": "Sähköjärjestelmän käyttötilanne",
+        "shortage_status": "Sähköpula"
+    },
+    "totals": {
+        "production": "Tuotanto",
+        "consumption": "Kulutus",
+        "net_export": "Nettovienti"
+    },
+    "map": {
+        "label": "Suomen rajasiirrot"
+    },
+    "borders": {
+        "norway": "Norja",
+        "northern_sweden": "Pohjois-Ruotsi",
+        "central_sweden": "Keski-Ruotsi",
+        "estonia": "Viro",
+        "aland_sweden": "Ahvenanmaa–Ruotsi",
+        "export": "vienti",
+        "import": "tuonti"
+    },
+    "mix": {
+        "nuclear": "Ydinvoima",
+        "hydro": "Vesivoima",
+        "wind": "Tuulivoima",
+        "district_heating_cogeneration": "Kaukolämpö",
+        "industrial_cogeneration": "Teollisuus",
+        "reserve_and_small_scale": "Muu"
+    },
+    "forecast": {
+        "wind_forecast": "Tuuli",
+        "solar_forecast": "Aurinko",
+        "consumption_forecast": "Kulutus",
+        "unavailable": "Ennuste ei ole saatavilla"
+    },
+    "details": {
+        "emission": "Päästökerroin {value} gCO₂/kWh",
+        "non_fossil": "Fossiiliton {value} %",
+        "batteries": "Akkujen lataus {charging} MW, purku {discharging} MW"
+    },
+    "editor": {
+        "show_status": "Käyttötilanne ja sähköpula",
+        "show_totals": "Tuotanto, kulutus ja nettovienti",
+        "show_map": "Rajasiirtojen kartta",
+        "show_borders": "Rajasiirrot listana",
+        "show_aland": "Ahvenanmaa–Ruotsi",
+        "show_aland_helper": "Ahvenanmaa kuuluu Ruotsin tarjousalueeseen SE3, joten tämä siirto ei kulje Suomen rajan yli. Näkyy, kun sen anturi on käytössä.",
+        "show_mix": "Tuotanto lajeittain",
+        "show_forecast": "Ennusteet kolmeksi päiväksi",
+        "show_details": "Päästökerroin, fossiiliton osuus ja akut",
+        "row_step": "Pyöristys osioihin jaetussa näkymässä",
+        "row_step_helper": "Automaattisella rivikorkeudella kortin korkeus pyöristetään ylöspäin kokonaisiin riveihin, tai tilan säästämiseksi puolikkaisiin riveihin.",
+        "row_step_full": "Kokonaisiin riveihin",
+        "row_step_half": "Puolikkaisiin riveihin"
+    }
+}
