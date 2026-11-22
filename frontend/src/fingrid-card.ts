@@ -29,7 +29,7 @@ import type { Border, Point, Sensors } from "./fingrid";
 import type { HomeAssistant } from "./hass";
 import { gridMinRows, heightCardSize, validHeight } from "./height";
 import { browserLanguage, translate } from "./localize/localize";
-import { drawnScale, fillLimit, filledHeight, filledStyle, spareRoom, validRowStep } from "./rows";
+import { drawnScale, fillLimit, filledHeight, filledStyle, validRowStep } from "./rows";
 import { shows } from "./types";
 import type { FingridCardConfig } from "./types";
 
@@ -81,7 +81,6 @@ export class FingridCard extends LitElement {
     @state() private forecasts?: Record<string, Point[]>;
     @state() private forecastFailed = false;
     @state() private filled = 0;
-    @state() private spare = 0;
 
     /** The sensors and what they were looked up from, as the lookup walks the whole entity registry. */
     private found?: { from: unknown; sensors: Sensors };
@@ -438,7 +437,7 @@ export class FingridCard extends LitElement {
 
     /**
      * In a sections view whose rows are left automatic, the card takes the whole rows its content needs, or the half rows
-     * with `row_step: half`, so the cards under it stay on the rows. The room left over goes under the title.
+     * with `row_step: half`, so the cards under it stay on the rows. The room left over is spread between the parts.
      */
     private fillRows(): void {
         const card = this.renderRoot.querySelector<HTMLElement>("ha-card");
@@ -449,30 +448,24 @@ export class FingridCard extends LitElement {
         const limit = fillLimit(this.config ?? {}, this.layout, this.minimumHeight());
         if (!limit) {
             this.filled = 0;
-            this.spare = 0;
             return;
         }
-        const last = content.lastElementChild as HTMLElement | null;
-        const header = content.firstElementChild as HTMLElement | null;
-        if (!last || !header) {
-            return;
-        }
+        // The parts' own heights, not where the last one ends, as the spread room pushes it down to the card's bottom.
         // Drawn sizes are unscaled, as the padding and border added to them are the layout's.
         const scale = drawnScale(card);
-        const spareNow = px(getComputedStyle(header).paddingBottom);
+        const parts = [...content.children] as HTMLElement[];
+        const style = getComputedStyle(card);
         const needed =
-            (last.getBoundingClientRect().bottom - card.getBoundingClientRect().top) / scale -
-            spareNow +
-            PADDING +
-            px(getComputedStyle(card).borderBottomWidth);
-        const filled = filledHeight(needed, this.config ?? {}, limit);
-        this.filled = filled;
-        this.spare = spareRoom(filled, needed);
+            parts.reduce((sum, part) => sum + part.getBoundingClientRect().height / scale, 0) +
+            GAP * (parts.length - 1) +
+            2 * PADDING +
+            px(style.borderTopWidth) +
+            px(style.borderBottomWidth);
+        this.filled = filledHeight(needed, this.config ?? {}, limit);
     }
 
     private cardStyle(): string {
-        const style = filledStyle(this.config ?? {}, this.layout, this.minimumHeight(), this.filled);
-        return this.filled ? `${style}; --spare: ${this.spare}px` : style;
+        return filledStyle(this.config ?? {}, this.layout, this.minimumHeight(), this.filled);
     }
 
     private megawatts(reading: number): string {
@@ -502,10 +495,15 @@ export class FingridCard extends LitElement {
                 overflow: hidden;
                 /* Its own transition: all would slide every change in the rows filled. */
                 transition: none;
-            }
-            .content {
+                /* A card taller than its parts, on filled or held rows, spreads the room between them. */
                 display: flex;
                 flex-direction: column;
+            }
+            .content {
+                flex: 1 0 auto;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
                 gap: ${GAP}px;
                 padding: ${PADDING}px;
             }
@@ -516,7 +514,6 @@ export class FingridCard extends LitElement {
                 gap: 8px;
                 min-height: ${HEADER_HEIGHT}px;
                 box-sizing: border-box;
-                padding-bottom: var(--spare, 0px);
             }
             .title {
                 font-size: 16px;

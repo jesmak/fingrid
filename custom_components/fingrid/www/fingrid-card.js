@@ -804,9 +804,6 @@ function drawnScale(card) {
 function filledHeight(content, config, limit = Infinity) {
   return Math.min(Math.max(1, Math.ceil((content - SLACK_PX + ROW_GAP_PX) / step(config))) * step(config) - ROW_GAP_PX, limit);
 }
-function spareRoom(filled, content) {
-  return Math.max(0, Math.floor(filled - content + SLACK_PX));
-}
 function fillLimit(config, layout, minimum = 0) {
   const rows = config.grid_options ? config.grid_options.rows : config.layout_options?.grid_rows;
   if (layout !== "grid" || typeof rows === "number") {
@@ -1204,7 +1201,6 @@ var FingridCard = class extends i4 {
     super(...arguments);
     this.forecastFailed = false;
     this.filled = 0;
-    this.spare = 0;
     /** The forecast sensors' last updates when the forecast was last asked for, so it is asked again only when one moves on. */
     this.forecastKey = "";
     this.resizes = typeof ResizeObserver === "undefined" ? void 0 : new ResizeObserver(() => this.measureSoon());
@@ -1520,7 +1516,7 @@ var FingridCard = class extends i4 {
   }
   /**
    * In a sections view whose rows are left automatic, the card takes the whole rows its content needs, or the half rows
-   * with `row_step: half`, so the cards under it stay on the rows. The room left over goes under the title.
+   * with `row_step: half`, so the cards under it stay on the rows. The room left over is spread between the parts.
    */
   fillRows() {
     const card = this.renderRoot.querySelector("ha-card");
@@ -1531,24 +1527,16 @@ var FingridCard = class extends i4 {
     const limit = fillLimit(this.config ?? {}, this.layout, this.minimumHeight());
     if (!limit) {
       this.filled = 0;
-      this.spare = 0;
-      return;
-    }
-    const last = content.lastElementChild;
-    const header = content.firstElementChild;
-    if (!last || !header) {
       return;
     }
     const scale = drawnScale(card);
-    const spareNow = px(getComputedStyle(header).paddingBottom);
-    const needed = (last.getBoundingClientRect().bottom - card.getBoundingClientRect().top) / scale - spareNow + PADDING + px(getComputedStyle(card).borderBottomWidth);
-    const filled = filledHeight(needed, this.config ?? {}, limit);
-    this.filled = filled;
-    this.spare = spareRoom(filled, needed);
+    const parts = [...content.children];
+    const style = getComputedStyle(card);
+    const needed = parts.reduce((sum, part) => sum + part.getBoundingClientRect().height / scale, 0) + GAP * (parts.length - 1) + 2 * PADDING + px(style.borderTopWidth) + px(style.borderBottomWidth);
+    this.filled = filledHeight(needed, this.config ?? {}, limit);
   }
   cardStyle() {
-    const style = filledStyle(this.config ?? {}, this.layout, this.minimumHeight(), this.filled);
-    return this.filled ? `${style}; --spare: ${this.spare}px` : style;
+    return filledStyle(this.config ?? {}, this.layout, this.minimumHeight(), this.filled);
   }
   megawatts(reading) {
     return `${this.number(reading)} MW`;
@@ -1572,10 +1560,15 @@ var FingridCard = class extends i4 {
                 overflow: hidden;
                 /* Its own transition: all would slide every change in the rows filled. */
                 transition: none;
-            }
-            .content {
+                /* A card taller than its parts, on filled or held rows, spreads the room between them. */
                 display: flex;
                 flex-direction: column;
+            }
+            .content {
+                flex: 1 0 auto;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
                 gap: ${GAP}px;
                 padding: ${PADDING}px;
             }
@@ -1586,7 +1579,6 @@ var FingridCard = class extends i4 {
                 gap: 8px;
                 min-height: ${HEADER_HEIGHT}px;
                 box-sizing: border-box;
-                padding-bottom: var(--spare, 0px);
             }
             .title {
                 font-size: 16px;
@@ -1800,9 +1792,6 @@ __decorateClass([
 __decorateClass([
   r5()
 ], FingridCard.prototype, "filled", 2);
-__decorateClass([
-  r5()
-], FingridCard.prototype, "spare", 2);
 var px = (value2) => Number.parseFloat(value2) || 0;
 if (!customElements.get("fingrid-card")) {
   console.info(
