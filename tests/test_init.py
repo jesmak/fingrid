@@ -37,6 +37,7 @@ async def test_sensors(hass: HomeAssistant, fingrid: AiohttpClientMocker) -> Non
     assert production.attributes["attribution"] == "Source Fingrid / data.fingrid.fi, license CC BY 4.0"
     # Fingrid's own sign: negative is import into Finland.
     assert hass.states.get("sensor.fingrid_export_to_northern_sweden").state == "-81.785"  # type: ignore[union-attr]
+    assert hass.states.get("sensor.fingrid_export_from_aland_to_sweden").state == "4.867"  # type: ignore[union-attr]
     assert hass.states.get("sensor.fingrid_non_fossil_share_of_production").state == "97.58"  # type: ignore[union-attr]
     assert hass.states.get("sensor.fingrid_power_system_state").state == "normal"  # type: ignore[union-attr]
     assert hass.states.get("sensor.fingrid_electricity_shortage").state == "normal"  # type: ignore[union-attr]

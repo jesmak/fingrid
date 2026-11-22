@@ -58,6 +58,9 @@ Their entity IDs follow Home Assistant's language. The examples here are those o
 `sensor.fingrid_wind_power`. The interval in the tables is how often Fingrid publishes the dataset.
 
 A transmission is positive when electricity flows out of Finland and negative when it flows in, as Fingrid gives it.
+Export from Åland to Sweden is positive when electricity flows from Åland to Sweden. Åland belongs to the Swedish
+bidding zone SE3, so this flow isn't across a border of mainland Finland, whose own link to Åland Fingrid publishes
+only the next morning.
 
 ### Enabled by default
 
@@ -76,6 +79,7 @@ A transmission is positive when electricity flows out of Finland and negative wh
 | Export to Central Sweden                  | MW       | 3 min    | 89              |
 | Export to Estonia                         | MW       | 3 min    | 180             |
 | Export to Norway                          | MW       | 3 min    | 187             |
+| Export from Åland to Sweden               | MW       | 3 min    | 90              |
 | Battery storage charging                  | MW       | 3 min    | 399             |
 | Battery storage discharging               | MW       | 3 min    | 398             |
 | Emission factor of consumption            | gCO₂/kWh | 3 min    | 265             |
@@ -104,7 +108,6 @@ Enable these in the device's page when you need them.
 
 | Sensor                                    | Unit | Interval | Fingrid dataset |
 | ----------------------------------------- | ---- | -------- | --------------- |
-| Export from Åland to Sweden               | MW   | 3 min    | 90              |
 | Peak load power                           | MW   | 3 min    | 183             |
 | Production surplus                        | MW   | 3 min    | 198             |
 | Production surplus, cumulative            | MW   | 3 min    | 186             |
@@ -118,9 +121,7 @@ Enable these in the device's page when you need them.
 | Temperature in Oulu                       | °C   | 3 min    | 196             |
 | Temperature in Rovaniemi                  | °C   | 3 min    | 185             |
 
-Export from Åland to Sweden is positive when electricity flows from Åland to Sweden. Åland belongs to the Swedish
-bidding zone SE3, so this isn't a border of mainland Finland. Fingrid gives the kinetic energy in GWs, which is the
-same as GJ.
+Fingrid gives the kinetic energy in GWs, which is the same as GJ.
 
 A sensor becomes unavailable when its dataset has had no reading for an hour.
 
