@@ -10,7 +10,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant.common import async_fire_time_changed
-from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker
+from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker, AiohttpClientMockResponse
 
 from custom_components.fingrid import api
 from custom_components.fingrid.const import DOMAIN, SERVICE_GET_FORECAST
@@ -168,3 +168,29 @@ async def test_requests_are_spaced(hass: HomeAssistant, aioclient_mock: AiohttpC
     started = loop.time()
     await api.Client(hass, "b").check()
     assert loop.time() - started < 0.29
+
+
+async def test_a_request_over_the_limit_is_asked_again_once(
+    hass: HomeAssistant, aioclient_mock: AiohttpClientMocker, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(api, "SPACING", 0)
+    monkeypatch.setattr(api, "RETRY_WAIT", 0)
+    statuses = iter([429, 200])
+
+    async def respond(method, url, data):
+        return AiohttpClientMockResponse(method, url, status=next(statuses), json={})
+
+    aioclient_mock.get(CHECK_URL, side_effect=respond)
+    await api.Client(hass, "a").check()
+    assert aioclient_mock.call_count == 2
+
+
+async def test_a_second_refusal_over_the_limit_fails(
+    hass: HomeAssistant, aioclient_mock: AiohttpClientMocker, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(api, "SPACING", 0)
+    monkeypatch.setattr(api, "RETRY_WAIT", 0)
+    aioclient_mock.get(CHECK_URL, status=429, json={})
+    with pytest.raises(api.FingridError, match="429"):
+        await api.Client(hass, "a").check()
+    assert aioclient_mock.call_count == 2

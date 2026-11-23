@@ -238,7 +238,8 @@ The data comes from [Fingrid's open data](https://data.fingrid.fi/en/), licensed
 data.fingrid.fi, license CC BY 4.0".
 
 Fingrid allows 10 000 requests a day and one every two seconds for each API key. The integration makes about 580 a
-day, and keeps its requests at least two seconds apart.
+day, and keeps its requests at least two seconds apart. Another client using the same key can still make Fingrid
+refuse one for the limit, and such a request is asked again once, five seconds later.
 
 This integration is unofficial and not affiliated with or endorsed by Fingrid. Each user signs up for an API key of
 their own.
