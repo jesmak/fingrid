@@ -804,6 +804,9 @@ function drawnScale(card) {
 function filledHeight(content, config, limit = Infinity) {
   return Math.min(Math.max(1, Math.ceil((content - SLACK_PX + ROW_GAP_PX) / step(config))) * step(config) - ROW_GAP_PX, limit);
 }
+function spareRoom(filled, content) {
+  return Math.max(0, Math.floor(filled - content + SLACK_PX));
+}
 function fillLimit(config, layout, minimum = 0) {
   const rows = config.grid_options ? config.grid_options.rows : config.layout_options?.grid_rows;
   if (layout !== "grid" || typeof rows === "number") {
@@ -1201,6 +1204,7 @@ var FingridCard = class extends i4 {
     super(...arguments);
     this.forecastFailed = false;
     this.filled = 0;
+    this.topped = false;
     /** The forecast sensors' last updates when the forecast was last asked for, so it is asked again only when one moves on. */
     this.forecastKey = "";
     this.resizes = typeof ResizeObserver === "undefined" ? void 0 : new ResizeObserver(() => this.measureSoon());
@@ -1247,13 +1251,13 @@ var FingridCard = class extends i4 {
     }
     const sensors = this.sensors();
     if (Object.keys(sensors).length === 0) {
-      return b2`<ha-card style=${this.cardStyle()}
+      return b2`<ha-card class=${this.topped ? "topped" : ""} style=${this.cardStyle()}
                 ><div class="content"><div class="message">${this.text("common.not_found")}</div></div></ha-card
             >`;
     }
     const config = this.config;
     return b2`
-            <ha-card style=${this.cardStyle()}>
+            <ha-card class=${this.topped ? "topped" : ""} style=${this.cardStyle()}>
                 <div class="content">
                     <div class="part header">
                         <span class="title">${this.text("common.name")}</span>
@@ -1516,7 +1520,9 @@ var FingridCard = class extends i4 {
   }
   /**
    * In a sections view whose rows are left automatic, the card takes the whole rows its content needs, or the half rows
-   * with `row_step: half`, so the cards under it stay on the rows. The room left over is spread between the parts.
+   * with `row_step: half`, so the cards under it stay on the rows. The room left over is spread between the parts. A
+   * card held to a height spreads its room the same way while it is less than a row, and from a row up keeps its parts
+   * at the top with the room under them.
    */
   fillRows() {
     const card = this.renderRoot.querySelector("ha-card");
@@ -1524,15 +1530,17 @@ var FingridCard = class extends i4 {
     if (!card || !content || !card.clientWidth) {
       return;
     }
-    const limit = fillLimit(this.config ?? {}, this.layout, this.minimumHeight());
-    if (!limit) {
-      this.filled = 0;
-      return;
-    }
     const scale = drawnScale(card);
     const parts = [...content.children];
     const style = getComputedStyle(card);
     const needed = parts.reduce((sum, part) => sum + part.getBoundingClientRect().height / scale, 0) + GAP * (parts.length - 1) + 2 * PADDING + px(style.borderTopWidth) + px(style.borderBottomWidth);
+    const limit = fillLimit(this.config ?? {}, this.layout, this.minimumHeight());
+    if (!limit) {
+      this.filled = 0;
+      this.topped = spareRoom(card.getBoundingClientRect().height / scale, needed) >= ROW_PX;
+      return;
+    }
+    this.topped = false;
     this.filled = filledHeight(needed, this.config ?? {}, limit);
   }
   cardStyle() {
@@ -1560,7 +1568,8 @@ var FingridCard = class extends i4 {
                 overflow: hidden;
                 /* Its own transition: all would slide every change in the rows filled. */
                 transition: none;
-                /* A card taller than its parts, on filled or held rows, spreads the room between them. */
+                /* A card taller than its parts, on filled rows or held with less than a row to spare, spreads the room
+                   between them. Held with more, the parts stay at the top. */
                 display: flex;
                 flex-direction: column;
             }
@@ -1571,6 +1580,9 @@ var FingridCard = class extends i4 {
                 justify-content: space-between;
                 gap: ${GAP}px;
                 padding: ${PADDING}px;
+            }
+            .topped .content {
+                justify-content: flex-start;
             }
             .header {
                 display: flex;
@@ -1798,6 +1810,9 @@ __decorateClass([
 __decorateClass([
   r5()
 ], FingridCard.prototype, "filled", 2);
+__decorateClass([
+  r5()
+], FingridCard.prototype, "topped", 2);
 var px = (value2) => Number.parseFloat(value2) || 0;
 if (!customElements.get("fingrid-card")) {
   console.info(

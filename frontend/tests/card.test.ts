@@ -76,4 +76,36 @@ describe("the forecast", () => {
         await settle(element);
         expect(callWS).toHaveBeenCalledTimes(2);
     });
+
+    // Every part laid out 100 px tall, with 12 px between them and 16 px of padding around them.
+    it.each([
+        ["spreads its parts while less than a row is left over", 63, false],
+        ["keeps its parts at the top with a row or more left over", 64, true],
+    ])("held to a height, %s", async (_name, spare, topped) => {
+        const element = (await card(
+            home("2026-11-22T18:00:00Z", "4226", vi.fn().mockResolvedValue({ response: {} })),
+        )) as unknown as HTMLElement & {
+            setConfig(config: object): void;
+            layout: string;
+            updateComplete: Promise<boolean>;
+        };
+        element.layout = "grid";
+        element.setConfig({ type: "custom:fingrid-card", height: 900 });
+        await settle(element);
+        const haCard = element.shadowRoot!.querySelector<HTMLElement>("ha-card")!;
+        const parts = [...haCard.querySelectorAll<HTMLElement>(":scope > .content > *")];
+        const needed = parts.length * 100 + 12 * (parts.length - 1) + 2 * 16;
+        Object.defineProperty(haCard, "clientWidth", { value: 454, configurable: true });
+        haCard.getBoundingClientRect = () => ({ top: 0, width: 454, height: needed + spare }) as DOMRect;
+        parts.forEach((part) => (part.getBoundingClientRect = () => ({ height: 100 }) as DOMRect));
+        vi.spyOn(window, "getComputedStyle").mockReturnValue({
+            width: "454px",
+            borderTopWidth: "0px",
+            borderBottomWidth: "0px",
+        } as CSSStyleDeclaration);
+        (element as unknown as { fillRows(): void }).fillRows();
+        vi.restoreAllMocks();
+        await element.updateComplete;
+        expect(haCard.classList.contains("topped")).toBe(topped);
+    });
 });

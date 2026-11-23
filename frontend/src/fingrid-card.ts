@@ -29,7 +29,7 @@ import type { Border, Point, Sensors } from "./fingrid";
 import type { HomeAssistant } from "./hass";
 import { gridMinRows, heightCardSize, validHeight } from "./height";
 import { browserLanguage, translate } from "./localize/localize";
-import { drawnScale, fillLimit, filledHeight, filledStyle, validRowStep } from "./rows";
+import { ROW_PX, drawnScale, fillLimit, filledHeight, filledStyle, spareRoom, validRowStep } from "./rows";
 import { shows } from "./types";
 import type { FingridCardConfig } from "./types";
 
@@ -81,6 +81,8 @@ export class FingridCard extends LitElement {
     @state() private forecasts?: Record<string, Point[]>;
     @state() private forecastFailed = false;
     @state() private filled = 0;
+    /** Held to a height that leaves a row or more over the parts, which then stay at the top. */
+    @state() private topped = false;
 
     /** The sensors and what they were looked up from, as the lookup walks the whole entity registry. */
     private found?: { from: unknown; sensors: Sensors };
@@ -138,13 +140,13 @@ export class FingridCard extends LitElement {
         }
         const sensors = this.sensors();
         if (Object.keys(sensors).length === 0) {
-            return html`<ha-card style=${this.cardStyle()}
+            return html`<ha-card class=${this.topped ? "topped" : ""} style=${this.cardStyle()}
                 ><div class="content"><div class="message">${this.text("common.not_found")}</div></div></ha-card
             >`;
         }
         const config = this.config;
         return html`
-            <ha-card style=${this.cardStyle()}>
+            <ha-card class=${this.topped ? "topped" : ""} style=${this.cardStyle()}>
                 <div class="content">
                     <div class="part header">
                         <span class="title">${this.text("common.name")}</span>
@@ -437,17 +439,14 @@ export class FingridCard extends LitElement {
 
     /**
      * In a sections view whose rows are left automatic, the card takes the whole rows its content needs, or the half rows
-     * with `row_step: half`, so the cards under it stay on the rows. The room left over is spread between the parts.
+     * with `row_step: half`, so the cards under it stay on the rows. The room left over is spread between the parts. A
+     * card held to a height spreads its room the same way while it is less than a row, and from a row up keeps its parts
+     * at the top with the room under them.
      */
     private fillRows(): void {
         const card = this.renderRoot.querySelector<HTMLElement>("ha-card");
         const content = card?.querySelector<HTMLElement>(":scope > .content");
         if (!card || !content || !card.clientWidth) {
-            return;
-        }
-        const limit = fillLimit(this.config ?? {}, this.layout, this.minimumHeight());
-        if (!limit) {
-            this.filled = 0;
             return;
         }
         // The parts' own heights, not where the last one ends, as the spread room pushes it down to the card's bottom.
@@ -461,6 +460,13 @@ export class FingridCard extends LitElement {
             2 * PADDING +
             px(style.borderTopWidth) +
             px(style.borderBottomWidth);
+        const limit = fillLimit(this.config ?? {}, this.layout, this.minimumHeight());
+        if (!limit) {
+            this.filled = 0;
+            this.topped = spareRoom(card.getBoundingClientRect().height / scale, needed) >= ROW_PX;
+            return;
+        }
+        this.topped = false;
         this.filled = filledHeight(needed, this.config ?? {}, limit);
     }
 
@@ -495,7 +501,8 @@ export class FingridCard extends LitElement {
                 overflow: hidden;
                 /* Its own transition: all would slide every change in the rows filled. */
                 transition: none;
-                /* A card taller than its parts, on filled or held rows, spreads the room between them. */
+                /* A card taller than its parts, on filled rows or held with less than a row to spare, spreads the room
+                   between them. Held with more, the parts stay at the top. */
                 display: flex;
                 flex-direction: column;
             }
@@ -506,6 +513,9 @@ export class FingridCard extends LitElement {
                 justify-content: space-between;
                 gap: ${GAP}px;
                 padding: ${PADDING}px;
+            }
+            .topped .content {
+                justify-content: flex-start;
             }
             .header {
                 display: flex;
