@@ -1641,6 +1641,12 @@ var FingridCard = class extends i4 {
                     font-size: 19px;
                 }
             }
+            /* Under the card's minimum width, as in the card picker's preview. */
+            @container (max-width: 300px) {
+                .number {
+                    font-size: 17px;
+                }
+            }
             .label,
             .legend,
             .details,
