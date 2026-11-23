@@ -5,6 +5,11 @@ from Fingrid's open data.
 
 [![GitHub Release][releases-shield]][releases] [![GitHub Release Date][release-date-shield]][releases] [![Downloads][downloads-shield]][releases] [![Marketplace][marketplace-shield]][marketplace] [![License][license-shield]](LICENSE)
 
+<p>
+<img src="https://raw.githubusercontent.com/jesmak/fingrid/main/docs/images/dashboard-light.png#gh-light-mode-only" width="1000" alt="A dashboard on a January evening with two Fingrid cards. The first shows the grid state and the electricity shortage both normal, production 11,900 MW, consumption 13,410 MW and a net import of 1,510 MW, and a map of Finland with arrows for the import from Norway and both Swedish areas, the export to Estonia and the flow from Åland to Sweden. The second shows the production by type led by nuclear, wind and hydro, the three-day forecasts of consumption, wind and solar, and the emission factor, the non-fossil share and the batteries">
+<img src="https://raw.githubusercontent.com/jesmak/fingrid/main/docs/images/dashboard-dark.png#gh-dark-mode-only" width="1000" alt="A dashboard on a January evening with two Fingrid cards. The first shows the grid state and the electricity shortage both normal, production 11,900 MW, consumption 13,410 MW and a net import of 1,510 MW, and a map of Finland with arrows for the import from Norway and both Swedish areas, the export to Estonia and the flow from Åland to Sweden. The second shows the production by type led by nuclear, wind and hydro, the three-day forecasts of consumption, wind and solar, and the emission factor, the non-fossil share and the batteries">
+</p>
+
 ## What is it?
 
 A custom component that reads Fingrid's open data, the measurements and forecasts that Finland's transmission system
@@ -155,6 +160,13 @@ sensor.fingrid_wind_power_forecast:
 ```
 
 ## Fingrid card
+
+<p>
+<img src="https://raw.githubusercontent.com/jesmak/fingrid/main/docs/images/card-light.png#gh-light-mode-only" width="400" alt="The card with every part shown by default, the grid state chips, the totals, the map of the cross-border flows, the production by type, the three-day forecasts and the line of details">
+<img src="https://raw.githubusercontent.com/jesmak/fingrid/main/docs/images/card-dark.png#gh-dark-mode-only" width="400" alt="The card with every part shown by default, the grid state chips, the totals, the map of the cross-border flows, the production by type, the three-day forecasts and the line of details">
+<img src="https://raw.githubusercontent.com/jesmak/fingrid/main/docs/images/card-borders-light.png#gh-light-mode-only" width="400" alt="The card with the cross-border flows as a list instead of the map, import from Norway, Northern Sweden and Central Sweden and export to Estonia and from Åland to Sweden, each with its MW">
+<img src="https://raw.githubusercontent.com/jesmak/fingrid/main/docs/images/card-borders-dark.png#gh-dark-mode-only" width="400" alt="The card with the cross-border flows as a list instead of the map, import from Norway, Northern Sweden and Central Sweden and export to Estonia and from Åland to Sweden, each with its MW">
+</p>
 
 The integration comes with a dashboard card that puts the sensors together. It shows the grid state and the electricity
 shortage status as chips beside the title, the production, consumption and net export, a map of Finland with an arrow for each
