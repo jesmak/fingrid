@@ -103,10 +103,10 @@ export function forecastPoints(response: unknown): Point[] {
         .sort((a, b) => a.start - b.start);
 }
 
-/** A rounded top for the forecast chart: the highest value up to the next 2000 MW, at least 2000. */
+/** A rounded top for the forecast chart, at least 2000 MW, that keeps the curves out of the top 15 %, where its label is. */
 export function chartTop(series: Point[][]): number {
     const highest = Math.max(0, ...series.flat().map((point) => point.value));
-    return Math.max(2000, Math.ceil(highest / 2000) * 2000);
+    return Math.max(2000, Math.ceil(highest / 0.85 / 2000) * 2000);
 }
 
 /** A series as SVG polyline points in a chart `width` × `height` from `start` to `end`. */

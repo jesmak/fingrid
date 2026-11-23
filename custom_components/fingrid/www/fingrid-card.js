@@ -1137,7 +1137,7 @@ function forecastPoints(response) {
 }
 function chartTop(series) {
   const highest = Math.max(0, ...series.flat().map((point) => point.value));
-  return Math.max(2e3, Math.ceil(highest / 2e3) * 2e3);
+  return Math.max(2e3, Math.ceil(highest / 0.85 / 2e3) * 2e3);
 }
 function polyline(points, start, end, top, width, height) {
   const span = Math.max(1, end - start);

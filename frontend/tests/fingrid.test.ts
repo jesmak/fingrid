@@ -80,8 +80,9 @@ describe("the forecast", () => {
         expect(forecastPoints({ forecast: "nope" })).toEqual([]);
     });
 
-    it("tops its chart at the next 2000 MW over the highest value", () => {
-        expect(chartTop([[{ start: 0, value: 12609 }], [{ start: 0, value: 7121 }]])).toBe(14000);
+    it("tops its chart at a round 2000 MW, leaving the label's top 15 % clear of the curves", () => {
+        expect(chartTop([[{ start: 0, value: 11000 }], [{ start: 0, value: 7121 }]])).toBe(14000);
+        expect(chartTop([[{ start: 0, value: 12609 }]])).toBe(16000);
         expect(chartTop([[{ start: 0, value: 0 }]])).toBe(2000);
         expect(chartTop([])).toBe(2000);
     });
