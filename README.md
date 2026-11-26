@@ -256,6 +256,17 @@ refuse one for the limit, and such a request is asked again once, five seconds l
 This integration is unofficial and not affiliated with or endorsed by Fingrid. Each user signs up for an API key of
 their own.
 
+## Translating
+
+The integration's texts are in `custom_components/fingrid/translations/`, one JSON file per language, named by its
+language code, such as `en.json` and `fi.json`. To add a language, copy `en.json` to the new language's code and
+translate the values.
+
+The Fingrid card's texts are in `frontend/src/localize/languages/`, in the same way. The card finds a new file by
+itself and uses it when Home Assistant is set to that language. A text left out falls back to English. A file may
+name a region, such as `pt-br.json`. It is used for `pt-BR`, falling back to a file for the language alone (`pt.json`),
+and then to English.
+
 ## Development
 
 Requires Python 3.14.
