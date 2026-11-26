@@ -35,6 +35,8 @@ describe("languages", () => {
         expect(translate("fi", "mix.nuclear")).toBe("Ydinvoima");
         expect(translate("xx", "mix.nuclear")).toBe(translate("en", "mix.nuclear"));
         expect(translate("fi-FI", "mix.nuclear")).toBe("Ydinvoima");
+        expect(translate("fi_FI", "mix.nuclear")).toBe("Ydinvoima");
+        expect(translate("xx-YY", "mix.nuclear")).toBe(translate("en", "mix.nuclear"));
         expect(translate("fi", "no.such.key")).toBe("no.such.key");
     });
 });
