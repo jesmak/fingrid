@@ -1,6 +1,7 @@
 {
   "domain": "fingrid",
   "name": "Fingrid",
+  "categories": ["energy"],
   "codeowners": [
     "@jesmak"
   ],
